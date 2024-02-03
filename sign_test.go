@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"crypto/aes"
 	"encoding/hex"
+	"testing"
 
-	"github.com/hirochachacha/go-smb2/internal/crypto/cmac"
+	"github.com/aead/cmac"
 
 	. "github.com/hirochachacha/go-smb2/internal/smb2"
-
-	"testing"
 )
 
 func TestSign(t *testing.T) {
@@ -33,7 +32,11 @@ func TestSign(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	signer := cmac.New(ciph)
+
+	signer, err := cmac.New(ciph)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	p := PacketCodec(pkt)
 

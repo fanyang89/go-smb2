@@ -12,8 +12,9 @@ import (
 	"fmt"
 	"hash"
 
+	"github.com/aead/cmac"
+
 	"github.com/hirochachacha/go-smb2/internal/crypto/ccm"
-	"github.com/hirochachacha/go-smb2/internal/crypto/cmac"
 
 	. "github.com/hirochachacha/go-smb2/internal/erref"
 	. "github.com/hirochachacha/go-smb2/internal/smb2"
@@ -137,8 +138,15 @@ func sessionSetup(conn *conn, i Initiator, ctx context.Context) (*session, error
 			if err != nil {
 				return nil, &InternalError{err.Error()}
 			}
-			s.signer = cmac.New(ciph)
-			s.verifier = cmac.New(ciph)
+			s.signer, err = cmac.New(ciph)
+			if err != nil {
+				panic(err)
+			}
+
+			s.verifier, err = cmac.New(ciph)
+			if err != nil {
+				panic(err)
+			}
 
 			// s.applicationKey = kdf(sessionKey, []byte("SMB2APP\x00"), []byte("SmbRpc\x00"))
 
@@ -176,8 +184,15 @@ func sessionSetup(conn *conn, i Initiator, ctx context.Context) (*session, error
 			if err != nil {
 				return nil, &InternalError{err.Error()}
 			}
-			s.signer = cmac.New(ciph)
-			s.verifier = cmac.New(ciph)
+			s.signer, err = cmac.New(ciph)
+			if err != nil {
+				panic(err)
+			}
+
+			s.verifier, err = cmac.New(ciph)
+			if err != nil {
+				panic(err)
+			}
 
 			// s.applicationKey = kdf(sessionKey, []byte("SMBAppKey\x00"), preauthIntegrityHashValue)
 
